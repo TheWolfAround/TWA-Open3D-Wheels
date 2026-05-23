@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open3D Wheels — Python 3.13+</title>
+  <!-- Font Awesome 6 (free brand icons) for professional social icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-hover: #1f242c;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --success: #3fb950;
+      --warning: #d29922;
+
+      /* Brand colors for social cards */
+      --yt-red: #ff0000;
+      --x-blue: #1DA1F2;
+      --bsky-blue: #1185fe;
+      --gh-white: #f0f6fc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo span { color: var(--accent); }
+    .header-links { display: flex; gap: 1.25rem; font-size: 0.9rem; }
+    .header-links a { color: var(--text-muted); }
+    .header-links a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 0rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+    }
+    .badge.win { color: var(--accent); }
+    .badge.py { color: var(--warning); }
+
+    /* ========= ENHANCED FOLLOW ME SECTION ========= */
+    .support-bar {
+      max-width: 960px;
+      margin: 0 auto 2rem;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+
+    .support-header {
+      margin-bottom: 2rem;
+    }
+    .support-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 80%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .support-header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    /* Modern social card design */
+    .support-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.2rem 0.75rem;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0.6rem;
+      backdrop-filter: blur(2px);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Glow & brand accent on hover */
+    .support-card:hover {
+      transform: translateY(-5px);
+      background: var(--surface-hover);
+      border-color: rgba(88, 166, 255, 0.5);
+      box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Brand-specific hover border glow (subtle but distinct) */
+    .support-card.youtube:hover {
+      border-color: var(--yt-red);
+      box-shadow: 0 8px 18px -8px rgba(255, 0, 0, 0.25);
+    }
+    .support-card.XTwitter:hover {
+      border-color: var(--x-blue);
+      box-shadow: 0 8px 18px -8px rgba(29, 161, 242, 0.25);
+    }
+    .support-card.bsky:hover {
+      border-color: var(--bsky-blue);
+      box-shadow: 0 8px 18px -8px rgba(17, 133, 254, 0.25);
+    }
+    .support-card.github:hover {
+      border-color: var(--gh-white);
+      box-shadow: 0 8px 18px -8px rgba(240, 246, 252, 0.2);
+    }
+
+    /* Main row with icon + platform name */
+    .card-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+    .support-card:hover .card-main {
+      color: white;
+    }
+    .support-card.youtube:hover .card-main i { color: var(--yt-red); }
+    .support-card.XTwitter:hover .card-main i { color: var(--x-blue); }
+    .support-card.bsky:hover .card-main i { color: var(--bsky-blue); }
+    .support-card.github:hover .card-main i { color: var(--gh-white); }
+
+    /* Platform handle (username) style */
+    .card-handle {
+      font-size: 0.8rem;
+      font-family: monospace;
+      background: rgba(88, 166, 255, 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 40px;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .support-card:hover .card-handle {
+      background: rgba(88, 166, 255, 0.2);
+      color: var(--accent-hover);
+      border-color: rgba(88, 166, 255, 0.3);
+    }
+
+    /* Extra subtle "follow" indicator */
+    .follow-badge {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.05);
+      border-radius: 30px;
+      padding: 0.2rem 0.7rem;
+      margin-top: 0.2rem;
+      color: var(--text-muted);
+      transition: 0.2s;
+    }
+    .support-card:hover .follow-badge {
+      background: rgba(88, 166, 255, 0.2);
+      color: var(--accent);
+    }
+
+    /* micro animation for icons */
+    .card-main i {
+      transition: transform 0.2s ease;
+    }
+    .support-card:hover .card-main i {
+      transform: scale(1.08);
+    }
+
+    /* Warning box and rest unchanged */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .warning {
+      background: rgba(56, 146, 206, 0.08);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .wheel-section {
+      margin-bottom: 2rem;
+    }
+    .wheel-section h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .wheel-section h2 .count {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--surface);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+    .wheel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.15s;
+    }
+    .wheel-card:hover { border-color: var(--border); }
+    .wheel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .wheel-title {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .wheel-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .wheel-meta span { margin-left: 0.75rem; }
+    .wheel-meta span:first-child { margin-left: 0; }
+
+    .code-block {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+      overflow-x: auto;
+      position: relative;
+      cursor: pointer;
+      user-select: all;
+    }
+    .code-block:hover { border-color: var(--border); }
+    .code-block .copy-hint {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.6rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity 0.15s;
+      pointer-events: none;
+    }
+    .code-block:hover .copy-hint { opacity: 1; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.6rem; }
+      .header-inner { flex-direction: column; align-items: flex-start; }
+      .support-grid { gap: 0.9rem; }
+      .support-card { padding: 1rem 0.5rem; }
+      .card-main { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">⚡ <span>Open3D</span> Wheels</div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Open3D Pre-built Wheels</h1>
+    <p><strong>Python 3.13 and above</strong> • Windows<br>Built from source by <strong>TheWolfAround</strong></p>
+    <div class="badge-row">
+      <span class="badge py">🐍 Python 3.13+</span>
+      <span class="badge win">🪟 Windows</span>
+    </div>
+  </section>
+
+  <!-- ENHANCED FOLLOW ME SECTION (modern, appealing, with handles + icons) -->
+  <section class="support-bar">
+    <div class="support-header">
+      <h1>Stay Connected & Support</h1>
+      <p>Your follow fuels future builds, tutorials,<br>and open-source C++ / AI content.</p>
+    </div>
+    <div class="support-grid">
+      <!-- YouTube -->
+      <a class="support-card youtube" href="https://www.youtube.com/@TheWolfAround?sub_confirmation=1" target="_blank">
+        <div class="card-main">
+          <i class="fab fa-youtube"></i> <span>YouTube</span>
+        </div>
+        <div class="card-handle">@TheWolfAround</div>
+        <div class="follow-badge"><i class="fas fa-bell"></i> Subscribe</div>
+      </a>
+      
+      <!-- X (Twitter) -->
+      <a class="support-card XTwitter" href="https://x.com/The_Wolf_Around" target="_blank">
+        <div class="card-main">
+          <i class="fab fa-x-twitter"></i> <span>X (Twitter)</span>
+        </div>
+        <div class="card-handle">@The_Wolf_Around</div>
+        <div class="follow-badge"><i class="fas fa-heart"></i> Follow</div>
+      </a>
+      
+      <!-- BlueSky -->
+      <a class="support-card bsky" href="https://bsky.app/profile/TheWolfAround.bsky.social" target="_blank">
+        <div class="card-main">
+          <i class="fab fa-bluesky"></i> <span>BlueSky</span>
+        </div>
+        <div class="card-handle">@TheWolfAround</div>
+        <div class="follow-badge"><i class="fas fa-cloud-sun"></i> Connect</div>
+      </a>
+      
+      <!-- GitHub -->
+      <a class="support-card github" href="https://github.com/TheWolfAround" target="_blank">
+        <div class="card-main">
+          <i class="fab fa-github"></i> <span>GitHub</span>
+        </div>
+        <div class="card-handle">TheWolfAround</div>
+        <div class="follow-badge"><i class="fas fa-star"></i> Star & Follow</div>
+      </a>
+    </div>
+    <!-- tiny extra note: builds & compile scripts -->
+    <div style="margin-top: 1.2rem; font-size: 0.75rem; color: var(--text-muted);">
+      <i class="fas fa-code-branch"></i> Compile script &nbsp;|&nbsp; <i class="fas fa-cogs"></i> Pre-built wheels for Python 3.13/3.14
+    </div>
+  </section>
+
+  <main class="container" id="wheels">
+    <div class="warning">
+      <div id="about">
+        <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem;">About These Builds</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+          These wheels are not maintained by the Open3D team. They are provided as-is for convenience while official Python 3.13+ support is pending. For production use, prefer official releases once available.
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+          Compiling Open3D requires extensive CMake and C++ knowledge, plus serious build horsepower. I'm a seasoned C++ developer and I build these wheels in my spare time to bridge the gap until official support lands.
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+          If these wheels save you hours of compilation time, consider supporting me by following on YouTube, X, and BlueSky.<br>
+          I share insights on various topic such as AI inference, GPU Hardware Acceleration, Game Development (Unreal Engine), Computer Graphics, Cross-Platform C++ development.
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          My build script is available on <a href="https://github.com/TheWolfAround/Compile-Open3D-for-Any-Python-Version" target="_blank">GitHub</a>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Python 3.13 Section -->
+    <div class="wheel-section">
+      <h2>
+        Python 3.13
+      </h2>
+
+      <div class="wheel-card">
+        <div class="wheel-header">
+          <div class="wheel-title">0.19.0 _ <a href="https://github.com/isl-org/Open3D/commit/0333798fcff5a2fe95470e69291eca6a9efbae6c">333798</a></div>
+          <div class="wheel-meta">
+            <span>🪟 Windows AMD64</span>
+            <span>Updated 2026-05-23</span>
+          </div>
+        </div>
+        <div class="code-block" onclick="navigator.clipboard.writeText(this.innerText.replace('Click to copy','').trim())">
+          <span class="copy-hint">Click to copy</span>
+          pip install open3d --find-links https://TheWolfAround.github.io/TWA-Open3D-Wheels/Open3D-0.19.0/py313
+        </div>
+      </div>
+
+    <!-- Python 3.14 Section -->
+    <div class="wheel-section">
+      <h2>
+        Python 3.14
+      </h2>
+
+      <div class="wheel-card">
+        <div class="wheel-header">
+          <div class="wheel-title">0.19.0 _ <a href="https://github.com/isl-org/Open3D/commit/0333798fcff5a2fe95470e69291eca6a9efbae6c">333798</a></div>
+          <div class="wheel-meta">
+            <span>🪟 Windows AMD64</span>
+            <span>Updated 2026-05-23</span>
+          </div>
+        </div>
+        <div class="code-block" onclick="navigator.clipboard.writeText(this.innerText.replace('Click to copy','').trim())">
+          <span class="copy-hint">Click to copy</span>
+          pip install open3d --find-links https://TheWolfAround.github.io/TWA-Open3D-Wheels/Open3D-0.19.0/py314
+        </div>
+      </div>
+  </main>
+
+  <footer>
+    <p>
+      Not affiliated with the <a href="http://www.open3d.org/" target="_blank">Open3D</a> project.<br>
+      Wheels are built from the official source under the MIT license.
+    </p>
+    <p style="margin-top: 0.5rem;">
+      ❤️ Built with patience & C++ | <strong>TheWolfAround</strong>
+    </p>
+  </footer>
+
+  <!-- subtle script for card consistency (copy remains unchanged) -->
+  <script>
+    // optional: ensure clipboard works smoothly on code blocks (already handled by onclick)
+    // no additional modifications needed.
+  </script>
+</body>
+</html>
